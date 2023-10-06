@@ -45,6 +45,7 @@ fh.setFormatter(formatter)
 logger.addHandler(sh)
 logger.addHandler(fh)
 
+
 def check_tokens():
     """Проверка наличия токенов."""
     for token in TOKEN_NAME_LIST:
