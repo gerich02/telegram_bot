@@ -107,7 +107,7 @@ def check_response(response):
         logger.error('Нет ключа homeworks')
         raise MissHomeworkInfoError(
             'Данные о домашних зданиях отсутствуют в ответе от API.'
-            )
+        )
     if not isinstance(response['homeworks'], list):
         logger.error('Данные переданы не в виде списка')
         raise TypeError
