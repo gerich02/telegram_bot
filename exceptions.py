@@ -29,3 +29,15 @@ class ExpectedDataError(Exception):
     """Данные в ответе не соответствуют ожидаемым."""
 
     pass
+
+
+class MissTokenError(Exception):
+    """Отсутстсвует один или более токен."""
+
+    pass
+
+
+class MissHomeworkInfoError(Exception):
+    """Данные о домашних зданиях отсутствуют в ответе от API."""
+
+    pass
