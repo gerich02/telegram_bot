@@ -99,9 +99,9 @@ def check_response(response):
         raise MissHomeworkInfoError(
             'Данные о домашних зданиях отсутствуют в ответе от API.'
         )
-    if not isinstance(response['homeworks'], list):
-        raise TypeError('Данные переданы не в виде списка')
     homeworks = response.get('homeworks')
+    if not isinstance(homeworks, list):
+        raise TypeError('Данные переданы не в виде списка')
     return homeworks
 
 
@@ -133,7 +133,7 @@ def main():
         try:
             response = get_api_answer(timestamp)
             homeworks = check_response(response)
-            if homeworks[0]:
+            if homeworks:
                 message = parse_status(homeworks[0])
             else:
                 logger.debug('Список работ пуст')
@@ -152,10 +152,10 @@ def main():
             message = f'Сбой в работе программы: {error}'
             logging.error(message)
             if message != old_status:
-                bot.send_message(TELEGRAM_CHAT_ID, message)
+                bot.send_message(bot, message)
                 old_status = message
         finally:
-            timestamp = time.time()
+            timestamp = response.get('current_date', timestamp)
             time.sleep(RETRY_PERIOD)
 
 
