@@ -152,7 +152,7 @@ def main():
             message = f'Сбой в работе программы: {error}'
             logging.error(message)
             if message != old_status:
-                bot.send_message(bot, message)
+                send_message(bot, message)
                 old_status = message
         finally:
             timestamp = response.get('current_date', timestamp)
