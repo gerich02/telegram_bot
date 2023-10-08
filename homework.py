@@ -69,34 +69,26 @@ def send_message(bot, message):
 def get_api_answer(timestamp):
     """Делает запрос к эндпоинту API-сервиса."""
     response_data = {
-        'endpoint': ENDPOINT,
+        'url': ENDPOINT,
         'headers': HEADERS,
         'params': {'from_date': timestamp}
     }
     try:
         logger.debug(
-            'Отправка запроса по адресу {r[endpoint]},'
-            'данными заголовка {r[headers]} и параметрами'
-            '{r[params]}.'.format(r=response_data)
+            'Отправка запроса по адресу {url},'
+            'данными заголовка {headers} и параметрами'
+            '{params}.'.format(**response_data)
         )
-        response = requests.get(
-            response_data['endpoint'],
-            headers=response_data['headers'],
-            params=response_data['params']
-        )
+        response = requests.get(**response_data)
     except requests.RequestException as error:
         raise ApiRequestError(f'Ошибка при выполнении запроса к API: {error}')
     if response.status_code != HTTPStatus.OK:
-        logger.error(
-            f'не получен ожидаемый ответ от API. Статус {response.status_code}'
-        )
         raise ResponseCodeError(
             f'не получен ожидаемый ответ от API. Статус {response.status_code}'
         )
-    else:
-        response = response.json()
-        logger.debug('Ответ получен и  преобразован к типу данных Python')
-        return response
+    response = response.json()
+    logger.debug('Ответ получен и  преобразован к типу данных Python')
+    return response
 
 
 def check_response(response):
@@ -104,22 +96,17 @@ def check_response(response):
     if not isinstance(response, dict):
         raise TypeError('Данные получены не в виде словаря')
     if 'homeworks' not in response:
-        logger.error('Нет ключа homeworks')
         raise MissHomeworkInfoError(
             'Данные о домашних зданиях отсутствуют в ответе от API.'
         )
     if not isinstance(response['homeworks'], list):
-        logger.error('Данные переданы не в виде списка')
-        raise TypeError
+        raise TypeError('Данные переданы не в виде списка')
     homeworks = response.get('homeworks')
-    if not homeworks:
-        logger.debug('Список работ пуст')
     return homeworks
 
 
 def parse_status(homework):
     """Проверяет статус и формирует сообщение о статусе ДЗ."""
-    print(homework)
     if 'homework_name' not in homework:
         raise ResponseKeyError('В ответе API отсутствует имя ключа')
     homework_name = homework.get('homework_name')
@@ -146,26 +133,27 @@ def main():
         try:
             response = get_api_answer(timestamp)
             homeworks = check_response(response)
-            homework = homeworks[0]
-            if homework:
-                message = parse_status(homework)
+            if homeworks[0]:
+                message = parse_status(homeworks[0])
             else:
+                logger.debug('Список работ пуст')
                 message = 'Новых статусов нет!'
             if message != old_status:
                 send_message(bot, message)
+                old_status = message
             else:
                 logger.debug(
                     'Статус домашнего задания не изменился,'
                     'информирование не требуется.'
                 )
-            old_status = message
         except MissHomeworkInfoError as error:
             logging.error(error)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logging.error(message)
-            bot.send_message(TELEGRAM_CHAT_ID, message)
-            old_status = message
+            if message != old_status:
+                bot.send_message(TELEGRAM_CHAT_ID, message)
+                old_status = message
         finally:
             timestamp = time.time()
             time.sleep(RETRY_PERIOD)
