@@ -1,4 +1,3 @@
-![badge](https://github.com/gerich02/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 #  Описание проекта "telegram_bot.git"
 
 ## Описание
