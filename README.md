@@ -22,13 +22,17 @@ Telegram-bot который взаимодействует с API сервиса
     ```
     cd telegram_bot
     ```
-2. Создайте файл .env и заполните его своими данными:
+3. Установите зависимости из файла requirements.txt:
+    ```
+    pip install -r requirements.txt
+    ```
+4. Создайте файл .env и заполните его своими данными:
     ```bash
     TELEGRAM_TOKEN= 5445863218:YGVBnkJHBjbkJbKjbyuBjkklJggJIKyugyS                        #Токен, получаемый при регистрации телеграм бота.
     PRACTICUM_TOKEN= y0_HHHghbhyuHBtPMklkmSKLYHGVbkbhtgFtFyuft56UJygvvJvghjGVHVGhgv       #Токен, получаемый при переходе по ссылке API сервиса.
     TELEGRAM_CHAT_ID= 844593658                                                           #Ваш telegram ID.
     ```
-3. Выполните команду:
+5. Выполните команду:
     ```
     python bot.py
     ```
