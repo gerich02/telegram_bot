@@ -38,4 +38,4 @@ Telegram-bot который взаимодействует с API сервиса
     ```
 
 ## Об авторе
->[Gerich02](https://github.com/gerich02).
+- [Варивода Георгий](https://github.com/gerich02)
